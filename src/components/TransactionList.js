@@ -4,6 +4,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { GlobalContext } from '../global/Store';
 import api from '../api/allDataUrl';
+import axios from 'axios';
 
 const TransactionList = () => {
   const {
@@ -24,6 +25,7 @@ const TransactionList = () => {
     currentIndex,
     currentTransaction,
   } = useContext(GlobalContext);
+
   useEffect(() => {
     const getAllData = async () => {
       const getAllData = await getData();
@@ -32,6 +34,19 @@ const TransactionList = () => {
     };
     getAllData();
   }, []);
+
+  useEffect(() => {
+    const newData = async () => {
+      axios
+        .get(
+          `https://zentaapi.azurewebsites.net/transaction/Index?pageSize=${pageSize}&page=${page}&searchPhrase=${searchPhrase}`
+        )
+        .then((res) => {
+          setAllData(res.data.data);
+        });
+    };
+    newData();
+  }, [pageSize, page, searchPhrase]);
 
   const getRequestParams = (searchPhrase, page, pageSize) => {
     let params = {};
@@ -47,29 +62,24 @@ const TransactionList = () => {
     if (pageSize) {
       params['size'] = pageSize;
     }
-
     return params;
   };
 
   const retrieveTransactions = () => {
     const params = getRequestParams(searchPhrase, page, pageSize);
 
-    api
-      .get(params)
+    axios
+      .get('https://zentaapi.azurewebsites.net/transaction/Index', params)
       .then((response) => {
         const { data, total } = response.data;
-
         setAllData(data);
         setCount(total);
-        console.log(allData);
-        console.log(count);
-
-        console.log(response.data);
       })
       .catch((e) => {
         console.log(e);
       });
   };
+
   const setActiveTransaction = (transaction, index) => {
     setCurrentTransaction(transaction);
     setCurrentIndex(index);
@@ -85,6 +95,8 @@ const TransactionList = () => {
 
   const handlePageSizeChange = (event) => {
     setPageSize(event.target.value);
+    // setCount(Math.round(event.target.value / count));
+    console.log(count);
     setPage(1);
   };
 
@@ -110,6 +122,16 @@ const TransactionList = () => {
           </div>
         </div>
       </div> */}
+      <Pagination
+        className="my-3"
+        count={count}
+        page={page}
+        siblingCount={1}
+        boundaryCount={1}
+        variant="outlined"
+        shape="rounded"
+        onChange={handlePageChange}
+      />
       <div className="col-md-6">
         {/* <h4>List Of All Senders</h4> */}
 
@@ -123,18 +145,6 @@ const TransactionList = () => {
             ))}
           </select>
         </div>
-
-        {/* 
-          <Pagination
-            className="my-3"
-            count={count}
-            page={page}
-            siblingCount={1}
-            boundaryCount={1}
-            variant="outlined"
-            shape="rounded"
-            onChange={handlePageChange}
-          />
 
         {/* <ul className="list-group"> */}
         {allData &&

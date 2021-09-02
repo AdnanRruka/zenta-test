@@ -16,6 +16,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 
 import Pagination from '@material-ui/lab/Pagination';
 import TransactionList from './TransactionList';
+import api from '../api/allDataUrl';
+import axios from 'axios';
 
 const drawerWidth = 240;
 
@@ -47,11 +49,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function PermanentDrawerLeft() {
-  const history = useHistory();
-  useEffect(() => {
-    getData();
-  }, []);
-  const classes = useStyles();
   const {
     getData,
     setAllData,
@@ -71,15 +68,54 @@ export default function PermanentDrawerLeft() {
     currentTransaction,
   } = useContext(GlobalContext);
 
+  const classes = useStyles();
+
   const handlePageChange = (event, value) => {
     setPage(value);
   };
-
-  const handlePageSizeChange = (event) => {
-    setPageSize(event.target.value);
-    setPage(1);
-    console.log(`/page=${event.target.value}`);
+  const onChangeSearchPhrase = (e) => {
+    setSearchPhrase(e.target.value);
   };
+
+  const retrieveTransactions = (e) => {
+    e.preventDefault();
+    const params = getRequestParams(searchPhrase, page, pageSize);
+
+    axios
+      .get('https://zentaapi.azurewebsites.net/transaction/Index', params)
+      .then((response) => {
+        const { data, total } = response.data;
+        // console.log(data);
+        setAllData(data);
+        setCount(total);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  const getRequestParams = (searchPhrase, page, pageSize) => {
+    let params = {};
+    if (searchPhrase) {
+      params['searchPhrase'] = searchPhrase;
+    }
+
+    if (page) {
+      params['page'] = page - 1;
+    }
+
+    if (pageSize) {
+      params['size'] = pageSize;
+    }
+
+    return params;
+  };
+
+  // const handlePageSizeChange = (event) => {
+  //   setPageSize(event.target.value);
+  //   setPage(1);
+  //   console.log(`/page=${event.target.value}`);
+  // };
 
   // console.log(allData);
 
@@ -88,10 +124,27 @@ export default function PermanentDrawerLeft() {
       <CssBaseline />
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
-          <Typography variant="h6" noWrap>
-            Permanent drawer
-          </Typography>
-          <Pagination
+          <div className="col-md-8">
+            <div className="input-group mb-3">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search..."
+                value={searchPhrase}
+                onChange={onChangeSearchPhrase}
+              />
+              <div className="input-group-append">
+                {/* <button
+                  className="btn btn-outline-secondary"
+                  type="button"
+                  onClick={retrieveTransactions}
+                >
+                  Search
+                </button> */}
+              </div>
+            </div>
+          </div>
+          {/* <Pagination
             className="my-3 "
             count={count}
             page={page}
@@ -100,7 +153,7 @@ export default function PermanentDrawerLeft() {
             variant="outlined"
             shape="rounded"
             onChange={handlePageChange}
-          />
+          /> */}
         </Toolbar>
       </AppBar>
       <Drawer

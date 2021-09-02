@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import api from '../api/allDataUrl';
-
+// import { useHistory } from 'react-router-dom';
+// import api from '../api/allDataUrl';
+import axios from 'axios';
 export const GlobalContext = React.createContext();
 
 const Store = ({ children }) => {
-  const history = useHistory();
-  console.log(history);
+  // const history = useHistory();
+  // console.log(history);
   const getData = async () => {
-    const response = await api.get();
+    const response = await axios.get(
+      'https://zentaapi.azurewebsites.net/transaction/Index'
+    );
+
     console.log(response);
     setCount(response.data.lastPage);
     setPage(response.data.from);
+    setPageSize(response.data.pageSize);
     return response.data.data;
   };
   const [allData, setAllData] = useState([]);
@@ -22,7 +26,7 @@ const Store = ({ children }) => {
 
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState();
 
   const pageSizes = [10, 25, 50];
 
