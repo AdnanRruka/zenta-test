@@ -8,13 +8,12 @@ const Store = ({ children }) => {
     const response = await axios.get(
       'https://zentaapi.azurewebsites.net/transaction/Index'
     );
-
-    console.log(response);
     setCount(response.data.lastPage);
     setPage(response.data.from);
     setPageSize(response.data.pageSize);
     return response.data.data;
   };
+
   const [allData, setAllData] = useState([]);
   const [currentTransaction, setCurrentTransaction] = useState(null);
   const [searchPhrase, setSearchPhrase] = useState('');

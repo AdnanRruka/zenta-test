@@ -156,7 +156,7 @@ export default function PermanentDrawerLeft() {
               </div>
               <div>
                 <label>
-                  <strong>PayIn: </strong>
+                  <strong>PayIn:</strong>
                 </label>{' '}
                 {currentTransaction.payIn}
               </div>

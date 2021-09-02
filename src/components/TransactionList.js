@@ -38,7 +38,6 @@ const TransactionList = () => {
     setCurrentIndex,
     setPage,
     setPageSize,
-    currentTransaction,
     order,
     setOrder,
     setOrderBy,
@@ -46,12 +45,11 @@ const TransactionList = () => {
   } = useContext(GlobalContext);
 
   useEffect(() => {
-    const getAllData = async () => {
-      const getAllData = await getData();
-      if (getAllData) setAllData(getAllData);
-      console.log(allData);
+    const getApi = async () => {
+      const fetchedData = await getData();
+      if (fetchedData) setAllData(fetchedData);
     };
-    getAllData();
+    getApi();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -76,7 +74,6 @@ const TransactionList = () => {
   const setActiveTransaction = (transaction, index) => {
     setCurrentTransaction(transaction);
     setCurrentIndex(index);
-    console.log(currentTransaction);
   };
 
   const handlePageChange = (event, value) => {
