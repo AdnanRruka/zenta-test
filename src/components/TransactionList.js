@@ -1,25 +1,29 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useContext } from 'react';
 import Pagination from '@material-ui/lab/Pagination';
-
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import { GlobalContext } from '../global/Store';
 import api from '../api/allDataUrl';
 
 const TransactionList = () => {
-  const getData = async () => {
-    const response = await api.get();
-    return response.data.data;
-  };
-  const [allData, setAllData] = useState([]);
-  const [currentTransaction, setCurrentTransaction] = useState(null);
-
-  const [searchPhrase, setSearchPhrase] = useState('');
-  const [currentIndex, setCurrentIndex] = useState(-1);
-
-  const [page, setPage] = useState(1);
-  const [count, setCount] = useState(0);
-  const [pageSize, setPageSize] = useState(3);
-
-  const pageSizes = [10, 25, 50];
-
+  const {
+    getData,
+    setAllData,
+    allData,
+    searchPhrase,
+    page,
+    pageSize,
+    setCount,
+    count,
+    setCurrentTransaction,
+    setCurrentIndex,
+    setSearchPhrase,
+    setPage,
+    setPageSize,
+    pageSizes,
+    currentIndex,
+    currentTransaction,
+  } = useContext(GlobalContext);
   useEffect(() => {
     const getAllData = async () => {
       const getAllData = await getData();
@@ -31,7 +35,7 @@ const TransactionList = () => {
 
   const getRequestParams = (searchPhrase, page, pageSize) => {
     let params = {};
-
+    console.log(searchPhrase, page, pageSize);
     if (searchPhrase) {
       params['searchPhrase'] = searchPhrase;
     }
@@ -86,7 +90,7 @@ const TransactionList = () => {
 
   return (
     <div className="list row">
-      <div className="col-md-8">
+      {/* <div className="col-md-8">
         <div className="input-group mb-3">
           <input
             type="text"
@@ -105,9 +109,9 @@ const TransactionList = () => {
             </button>
           </div>
         </div>
-      </div>
+      </div> */}
       <div className="col-md-6">
-        <h4>List Of All Senders</h4>
+        {/* <h4>List Of All Senders</h4> */}
 
         <div className="mt-3">
           {'Senders per Page: '}
@@ -118,7 +122,9 @@ const TransactionList = () => {
               </option>
             ))}
           </select>
+        </div>
 
+        {/* 
           <Pagination
             className="my-3"
             count={count}
@@ -129,10 +135,20 @@ const TransactionList = () => {
             shape="rounded"
             onChange={handlePageChange}
           />
-        </div>
 
-        <ul className="list-group">
-          {allData &&
+        {/* <ul className="list-group"> */}
+        {allData &&
+          allData.map((data, index) => (
+            <ListItem
+              onClick={() => setActiveTransaction(data, index)}
+              button
+              key={data}
+            >
+              <ListItemText primary={data.sender} />
+            </ListItem>
+          ))}
+
+        {/* {allData &&
             allData.map((data, index) => (
               <li
                 className={
@@ -143,11 +159,11 @@ const TransactionList = () => {
               >
                 {data.sender}
               </li>
-            ))}
-        </ul>
+            ))} */}
+        {/* </ul> */}
       </div>
       <div className="col-md-6">
-        {currentTransaction ? (
+        {/* {currentTransaction ? (
           <div>
             <h4>Customer List</h4>
             <div>
@@ -174,7 +190,7 @@ const TransactionList = () => {
             <br />
             <p>Please click on a Transaction Made By Customer...</p>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );
