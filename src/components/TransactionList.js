@@ -1,12 +1,29 @@
 import React, { useEffect, useContext } from 'react';
+import { useHistory } from 'react-router-dom';
 import Pagination from '@material-ui/lab/Pagination';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { GlobalContext } from '../global/Store';
-import api from '../api/allDataUrl';
+import { makeStyles } from '@material-ui/core/styles';
+import MenuItem from '@material-ui/core/MenuItem';
+import InputLabel from '@material-ui/core/InputLabel';
+import Select from '@material-ui/core/Select';
+import FormControl from '@material-ui/core/FormControl';
 import axios from 'axios';
 
+const useStyles = makeStyles((theme) => ({
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 160,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+  },
+}));
+
 const TransactionList = () => {
+  let history = useHistory();
+  const classes = useStyles();
   const {
     getData,
     setAllData,
@@ -14,16 +31,16 @@ const TransactionList = () => {
     searchPhrase,
     page,
     pageSize,
-    setCount,
     count,
     setCurrentTransaction,
     setCurrentIndex,
-    setSearchPhrase,
     setPage,
     setPageSize,
-    pageSizes,
-    currentIndex,
     currentTransaction,
+    order,
+    setOrder,
+    setOrderBy,
+    orderBy,
   } = useContext(GlobalContext);
 
   useEffect(() => {
@@ -37,56 +54,21 @@ const TransactionList = () => {
 
   useEffect(() => {
     const newData = async () => {
+      let query = `?pageSize=${pageSize}&page=${page}&order=${order}&orderBy=${orderBy}&searchPhrase=${searchPhrase}`;
       axios
-        .get(
-          `https://zentaapi.azurewebsites.net/transaction/Index?pageSize=${pageSize}&page=${page}&searchPhrase=${searchPhrase}`
-        )
+        .get(`https://zentaapi.azurewebsites.net/transaction/Index${query}`)
         .then((res) => {
           setAllData(res.data.data);
+          history.push(query);
         });
     };
     newData();
-  }, [pageSize, page, searchPhrase]);
-
-  const getRequestParams = (searchPhrase, page, pageSize) => {
-    let params = {};
-    console.log(searchPhrase, page, pageSize);
-    if (searchPhrase) {
-      params['searchPhrase'] = searchPhrase;
-    }
-
-    if (page) {
-      params['page'] = page - 1;
-    }
-
-    if (pageSize) {
-      params['size'] = pageSize;
-    }
-    return params;
-  };
-
-  const retrieveTransactions = () => {
-    const params = getRequestParams(searchPhrase, page, pageSize);
-
-    axios
-      .get('https://zentaapi.azurewebsites.net/transaction/Index', params)
-      .then((response) => {
-        const { data, total } = response.data;
-        setAllData(data);
-        setCount(total);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
+  }, [pageSize, page, searchPhrase, order, orderBy]);
 
   const setActiveTransaction = (transaction, index) => {
     setCurrentTransaction(transaction);
     setCurrentIndex(index);
-  };
-
-  const onChangeSearchPhrase = (e) => {
-    setSearchPhrase(e.target.value);
+    console.log(currentTransaction);
   };
 
   const handlePageChange = (event, value) => {
@@ -95,33 +77,19 @@ const TransactionList = () => {
 
   const handlePageSizeChange = (event) => {
     setPageSize(event.target.value);
-    // setCount(Math.round(event.target.value / count));
-    console.log(count);
+    setPage(1);
+  };
+  const handleOrderChange = (event) => {
+    if (event.target.value === 'Code' || event.target.value === 'time') {
+      setOrderBy(event.target.value);
+    } else {
+      setOrder(event.target.value);
+    }
     setPage(1);
   };
 
   return (
     <div className="list row">
-      {/* <div className="col-md-8">
-        <div className="input-group mb-3">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Search by title"
-            value={searchPhrase}
-            onChange={onChangeSearchPhrase}
-          />
-          <div className="input-group-append">
-            <button
-              className="btn btn-outline-secondary"
-              type="button"
-              onClick={retrieveTransactions}
-            >
-              Search
-            </button>
-          </div>
-        </div>
-      </div> */}
       <Pagination
         className="my-3"
         count={count}
@@ -132,76 +100,45 @@ const TransactionList = () => {
         shape="rounded"
         onChange={handlePageChange}
       />
-      <div className="col-md-6">
-        {/* <h4>List Of All Senders</h4> */}
 
-        <div className="mt-3">
-          {'Senders per Page: '}
-          <select onChange={handlePageSizeChange} value={pageSize}>
-            {pageSizes.map((size) => (
-              <option key={size} value={size}>
-                {size}
-              </option>
-            ))}
-          </select>
-        </div>
+      <FormControl className={classes.formControl}>
+        <InputLabel id="demo-simple-select-label">Senders per Page:</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={pageSize}
+          onChange={handlePageSizeChange}
+        >
+          <MenuItem value={10}>Ten</MenuItem>
+          <MenuItem value={20}>Twenty</MenuItem>
+          <MenuItem value={50}>Fifty</MenuItem>
+        </Select>
+      </FormControl>
 
-        {/* <ul className="list-group"> */}
-        {allData &&
-          allData.map((data, index) => (
-            <ListItem
-              onClick={() => setActiveTransaction(data, index)}
-              button
-              key={data}
-            >
-              <ListItemText primary={data.sender} />
-            </ListItem>
-          ))}
-
-        {/* {allData &&
-            allData.map((data, index) => (
-              <li
-                className={
-                  'list-group-item ' + (index === currentIndex ? 'active' : '')
-                }
-                onClick={() => setActiveTransaction(data, index)}
-                key={index}
-              >
-                {data.sender}
-              </li>
-            ))} */}
-        {/* </ul> */}
-      </div>
-      <div className="col-md-6">
-        {/* {currentTransaction ? (
-          <div>
-            <h4>Customer List</h4>
-            <div>
-              <label>
-                <strong>Sender:</strong>
-              </label>{' '}
-              {currentTransaction.sender}
-            </div>
-            <div>
-              <label>
-                <strong>payIn:</strong>
-              </label>{' '}
-              {currentTransaction.payIn}
-            </div>
-            <div>
-              <label>
-                <strong>PayOut:</strong>
-              </label>{' '}
-              {currentTransaction.payOut}
-            </div>
-          </div>
-        ) : (
-          <div>
-            <br />
-            <p>Please click on a Transaction Made By Customer...</p>
-          </div>
-        )} */}
-      </div>
+      <FormControl className={classes.formControl}>
+        <InputLabel id="demo-simple-select-label">Order By:</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={order ? order : orderBy}
+          onChange={handleOrderChange}
+        >
+          <MenuItem value="asc">A-Z</MenuItem>
+          <MenuItem value="desc">Z-A</MenuItem>
+          <MenuItem value="Code">Code</MenuItem>
+          <MenuItem value="time">Time</MenuItem>
+        </Select>
+      </FormControl>
+      {allData &&
+        allData.map((data, index) => (
+          <ListItem
+            onClick={() => setActiveTransaction(data, index)}
+            button
+            key={data}
+          >
+            <ListItemText primary={data.sender} />
+          </ListItem>
+        ))}
     </div>
   );
 };
