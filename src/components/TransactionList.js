@@ -1,14 +1,10 @@
 import React, { useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import Pagination from '@material-ui/lab/Pagination';
+
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { GlobalContext } from '../global/Store';
 import { makeStyles } from '@material-ui/core/styles';
-import MenuItem from '@material-ui/core/MenuItem';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import FormControl from '@material-ui/core/FormControl';
 import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
 import axios from 'axios';
@@ -33,15 +29,12 @@ const TransactionList = () => {
     searchPhrase,
     page,
     pageSize,
-    count,
     setCurrentTransaction,
     setCurrentIndex,
-    setPage,
-    setPageSize,
     order,
-    setOrder,
-    setOrderBy,
     orderBy,
+    startDate,
+    endDate,
   } = useContext(GlobalContext);
 
   useEffect(() => {
@@ -59,6 +52,13 @@ const TransactionList = () => {
       if (searchPhrase) {
         query += `&searchPhrase=${searchPhrase}`;
       }
+      if (startDate) {
+        query += `&startDate=${startDate}`;
+      }
+      if (endDate) {
+        query += `&endDate=${endDate}`;
+      }
+
       axios
         .get(`https://zentaapi.azurewebsites.net/transaction/Index${query}`)
         .then((res) => {
@@ -69,82 +69,15 @@ const TransactionList = () => {
 
     newData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageSize, page, searchPhrase, order, orderBy]);
+  }, [pageSize, page, searchPhrase, order, orderBy, startDate, endDate]);
 
   const setActiveTransaction = (transaction, index) => {
     setCurrentTransaction(transaction);
     setCurrentIndex(index);
   };
 
-  const handlePageChange = (event, value) => {
-    setPage(value);
-  };
-
-  const handlePageSizeChange = (event) => {
-    setPageSize(event.target.value);
-    setPage(1);
-  };
-  const handleOrderChange = (event) => {
-    if (event.target.value === 'Code' || event.target.value === 'time') {
-      setOrderBy(event.target.value);
-    } else {
-      setOrder(event.target.value);
-    }
-    setPage(1);
-  };
-
   return (
     <>
-      <Pagination
-        className="my-3"
-        count={count}
-        page={page}
-        siblingCount={1}
-        boundaryCount={1}
-        variant="outlined"
-        shape="rounded"
-        onChange={handlePageChange}
-      />
-
-      <FormControl className={classes.formControl}>
-        <InputLabel id="demo-simple-select-label">Senders per Page:</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={pageSize}
-          onChange={handlePageSizeChange}
-        >
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={50}>Fifty</MenuItem>
-        </Select>
-      </FormControl>
-
-      <FormControl className={classes.formControl}>
-        <InputLabel id="demo-simple-select-label">Order:</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={order}
-          onChange={handleOrderChange}
-        >
-          <MenuItem value="asc">A-Z</MenuItem>
-          <MenuItem value="desc">Z-A</MenuItem>
-        </Select>
-      </FormControl>
-
-      <FormControl className={classes.formControl}>
-        <InputLabel id="demo-simple-select-label">Order By:</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={orderBy}
-          onChange={handleOrderChange}
-        >
-          <MenuItem value="Code">Code</MenuItem>
-          <MenuItem value="time">Time</MenuItem>
-        </Select>
-      </FormControl>
       <Typography variant="h6" className={classes.title}>
         All Senders
       </Typography>

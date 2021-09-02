@@ -11,6 +11,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import InputBase from '@material-ui/core/InputBase';
 import Typography from '@material-ui/core/Typography';
 import TransactionList from './TransactionList';
+import FilterFunctions from './FilterFunctions';
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -123,6 +124,16 @@ export default function PermanentDrawerLeft() {
         <List>
           <TransactionList />
         </List>
+        <Drawer
+          className={classes.drawer}
+          variant="permanent"
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+          anchor="right"
+        >
+          <FilterFunctions />
+        </Drawer>
       </Drawer>
       <main className={classes.content}>
         <div className={classes.toolbar} />

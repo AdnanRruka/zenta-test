@@ -15,6 +15,9 @@ const Store = ({ children }) => {
   };
 
   const [allData, setAllData] = useState([]);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+
   const [currentTransaction, setCurrentTransaction] = useState(null);
   const [searchPhrase, setSearchPhrase] = useState('');
   const [order, setOrder] = useState('asc');
@@ -49,6 +52,10 @@ const Store = ({ children }) => {
         setOrder,
         setOrderBy,
         orderBy,
+        setStartDate,
+        startDate,
+        setEndDate,
+        endDate,
       }}
     >
       {children}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import SideBar from './components/SideBar';
+import MainView from './components/MainView';
 import Store from './global/Store';
 
 const App = () => {
@@ -8,7 +8,7 @@ const App = () => {
     <Store>
       <Router>
         <Switch>
-          <Route path="/" component={SideBar} />
+          <Route path="/" component={MainView} />
         </Switch>
       </Router>
     </Store>
