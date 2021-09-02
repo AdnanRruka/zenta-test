@@ -9,6 +9,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
+import Divider from '@material-ui/core/Divider';
+import Typography from '@material-ui/core/Typography';
 import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
@@ -50,11 +52,15 @@ const TransactionList = () => {
       console.log(allData);
     };
     getAllData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     const newData = async () => {
-      let query = `?pageSize=${pageSize}&page=${page}&order=${order}&orderBy=${orderBy}&searchPhrase=${searchPhrase}`;
+      let query = `?pageSize=${pageSize}&page=${page}&order=${order}&orderBy=${orderBy}`;
+      if (searchPhrase) {
+        query += `&searchPhrase=${searchPhrase}`;
+      }
       axios
         .get(`https://zentaapi.azurewebsites.net/transaction/Index${query}`)
         .then((res) => {
@@ -62,7 +68,9 @@ const TransactionList = () => {
           history.push(query);
         });
     };
+
     newData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageSize, page, searchPhrase, order, orderBy]);
 
   const setActiveTransaction = (transaction, index) => {
@@ -89,7 +97,7 @@ const TransactionList = () => {
   };
 
   return (
-    <div className="list row">
+    <>
       <Pagination
         className="my-3"
         count={count}
@@ -116,19 +124,34 @@ const TransactionList = () => {
       </FormControl>
 
       <FormControl className={classes.formControl}>
-        <InputLabel id="demo-simple-select-label">Order By:</InputLabel>
+        <InputLabel id="demo-simple-select-label">Order:</InputLabel>
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          value={order ? order : orderBy}
+          value={order}
           onChange={handleOrderChange}
         >
           <MenuItem value="asc">A-Z</MenuItem>
           <MenuItem value="desc">Z-A</MenuItem>
+        </Select>
+      </FormControl>
+
+      <FormControl className={classes.formControl}>
+        <InputLabel id="demo-simple-select-label">Order By:</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={orderBy}
+          onChange={handleOrderChange}
+        >
           <MenuItem value="Code">Code</MenuItem>
           <MenuItem value="time">Time</MenuItem>
         </Select>
       </FormControl>
+      <Typography variant="h6" className={classes.title}>
+        All Senders
+      </Typography>
+      <Divider />
       {allData &&
         allData.map((data, index) => (
           <ListItem
@@ -139,7 +162,7 @@ const TransactionList = () => {
             <ListItemText primary={data.sender} />
           </ListItem>
         ))}
-    </div>
+    </>
   );
 };
 

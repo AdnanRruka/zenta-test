@@ -10,7 +10,6 @@ import List from '@material-ui/core/List';
 import SearchIcon from '@material-ui/icons/Search';
 import InputBase from '@material-ui/core/InputBase';
 import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
 import TransactionList from './TransactionList';
 const drawerWidth = 240;
 
@@ -121,10 +120,6 @@ export default function PermanentDrawerLeft() {
         }}
         anchor="left"
       >
-        <Typography variant="h6" className={classes.title}>
-          All Senders
-        </Typography>
-        <Divider />
         <List>
           <TransactionList />
         </List>
