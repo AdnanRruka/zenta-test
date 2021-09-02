@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
-// import { useHistory } from 'react-router-dom';
-// import api from '../api/allDataUrl';
+
 import axios from 'axios';
 export const GlobalContext = React.createContext();
 
 const Store = ({ children }) => {
-  // const history = useHistory();
-  // console.log(history);
   const getData = async () => {
     const response = await axios.get(
       'https://zentaapi.azurewebsites.net/transaction/Index'
