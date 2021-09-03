@@ -8,7 +8,6 @@ import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
 import Pagination from '@material-ui/lab/Pagination';
 import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
 import ClearIcon from '@material-ui/icons/Clear';
 import { IconButton } from '@material-ui/core';
 
@@ -158,16 +157,6 @@ function FilterFunctions() {
           <ClearIcon />
         </IconButton>
       </form>
-
-      {/* <Button
-          onClick={(e) => {
-            clearAllDates(e);
-          }}
-          variant="contained"
-          color="primary"
-        >
-          Clear All Dates
-        </Button> */}
 
       <Pagination
         count={count}

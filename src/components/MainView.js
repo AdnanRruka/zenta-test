@@ -12,14 +12,26 @@ import InputBase from '@material-ui/core/InputBase';
 import Typography from '@material-ui/core/Typography';
 import TransactionList from './TransactionList';
 import FilterFunctions from './FilterFunctions';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Card from '@material-ui/core/Card';
+
+import Button from '@material-ui/core/Button';
+
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
   },
+  rootCard: {
+    minWidth: 275,
+  },
   title: {
     margin: theme.spacing(4, 2, 2),
+  },
+  titleCard: {
+    fontSize: 14,
   },
   appBar: {
     width: `calc(100% - ${drawerWidth}px)`,
@@ -77,8 +89,15 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function PermanentDrawerLeft() {
-  const { searchPhrase, setSearchPhrase, setPageSize, currentTransaction } =
-    useContext(GlobalContext);
+  const {
+    searchPhrase,
+    setSearchPhrase,
+    setPageSize,
+    currentTransaction,
+    setTransactionDetails,
+    transactionDetails,
+    allData,
+  } = useContext(GlobalContext);
 
   const classes = useStyles();
 
@@ -111,6 +130,17 @@ export default function PermanentDrawerLeft() {
               inputProps={{ 'aria-label': 'search' }}
             />
           </div>
+          <Button
+            onClick={(e) => {
+              setTransactionDetails(!transactionDetails);
+            }}
+            variant="outlined"
+            color="default"
+          >
+            {transactionDetails
+              ? 'Hide all transactions'
+              : 'Show all transactions'}
+          </Button>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -138,69 +168,129 @@ export default function PermanentDrawerLeft() {
       <main className={classes.content}>
         <div className={classes.toolbar} />
         <Typography paragraph>
-          {currentTransaction ? (
-            <div>
-              <h4>Customer List</h4>
-              <div>
-                <label>
-                  <strong>Sender:</strong>
-                </label>{' '}
-                {currentTransaction.sender}
-              </div>
-              <div>
-                <label>
-                  <strong>Recipient:</strong>
-                </label>{' '}
-                {currentTransaction.recipient}
-              </div>
-              <div>
-                <label>
-                  <strong>Date:</strong>
-                </label>{' '}
-                {currentTransaction.time}
-              </div>
-              <div>
-                <label>
-                  <strong>ID:</strong>
-                </label>{' '}
-                {currentTransaction.id}
-              </div>
-              <div>
-                <label>
-                  <strong>PayIn:</strong>
-                </label>{' '}
-                {currentTransaction.payIn}
-              </div>
-              <div>
-                <label>
-                  <strong>PayOut:</strong>
-                </label>{' '}
-                {currentTransaction.payOut}
-              </div>
-              <div>
-                <label>
-                  <strong>Status:</strong>
-                </label>{' '}
-                {currentTransaction.status}
-              </div>
-              <div>
-                <label>
-                  <strong>From Currency:</strong>
-                </label>{' '}
-                {currentTransaction.fromCurrency}
-              </div>
-              <div>
-                <label>
-                  <strong>To Currency:</strong>
-                </label>{' '}
-                {currentTransaction.toCurrency}
-              </div>
-            </div>
+          {transactionDetails ? (
+            <>
+              {allData &&
+                allData.map((data, index) => (
+                  <Card
+                    className={classes.rootCard}
+                    variant="outlined"
+                    button
+                    key={data.id}
+                  >
+                    <Typography
+                      className={classes.titleCard}
+                      color="textSecondary"
+                      gutterBottom
+                    >
+                      Sender
+                    </Typography>
+                    <Typography variant="h6" component="h2">
+                      {data.sender}
+                    </Typography>
+                    <Typography
+                      className={classes.titleCard}
+                      color="textSecondary"
+                      gutterBottom
+                    >
+                      Recipient
+                    </Typography>
+                    <Typography variant="h6" component="h2">
+                      {data.recipient}
+                    </Typography>
+                    <Card>
+                      <Typography variant="textSecondary" component="h5">
+                        Id: {data.id}
+                      </Typography>
+                      <Typography variant="textSecondary" component="h5">
+                        Date: {data.time}
+                      </Typography>
+                      <Typography variant="textSecondary" component="h5">
+                        Pay In: {data.payIn}
+                      </Typography>
+                      <Typography variant="textSecondary" component="h5">
+                        Pay Out: {data.payOut}
+                      </Typography>
+                      <Typography variant="textSecondary" component="h5">
+                        From Currency: {data.fromCurrency}
+                      </Typography>
+                      <Typography variant="textSecondary" component="h5">
+                        To Currency: {data.toCurrency}
+                      </Typography>
+                      <Typography variant="textSecondary" component="h5">
+                        Status: {data.status}
+                      </Typography>
+                    </Card>
+                  </Card>
+                ))}{' '}
+            </>
           ) : (
-            <div>
-              <br />
-              <p>Please click on a Transaction Made By Customer...</p>
-            </div>
+            <>
+              {currentTransaction ? (
+                <div>
+                  <h4>Customer List</h4>
+                  <div>
+                    <label>
+                      <strong>Sender:</strong>
+                    </label>{' '}
+                    {currentTransaction.sender}
+                  </div>
+                  <div>
+                    <label>
+                      <strong>Recipient:</strong>
+                    </label>{' '}
+                    {currentTransaction.recipient}
+                  </div>
+                  <div>
+                    <label>
+                      <strong>Date:</strong>
+                    </label>{' '}
+                    {currentTransaction.time}
+                  </div>
+                  <div>
+                    <label>
+                      <strong>ID:</strong>
+                    </label>{' '}
+                    {currentTransaction.id}
+                  </div>
+                  <div>
+                    <label>
+                      <strong>PayIn:</strong>
+                    </label>{' '}
+                    {currentTransaction.payIn}
+                  </div>
+                  <div>
+                    <label>
+                      <strong>PayOut:</strong>
+                    </label>{' '}
+                    {currentTransaction.payOut}
+                  </div>
+                  <div>
+                    <label>
+                      <strong>Status:</strong>
+                    </label>{' '}
+                    {currentTransaction.status}
+                  </div>
+                  <div>
+                    <label>
+                      <strong>From Currency:</strong>
+                    </label>{' '}
+                    {currentTransaction.fromCurrency}
+                  </div>
+                  <div>
+                    <label>
+                      <strong>To Currency:</strong>
+                    </label>{' '}
+                    {currentTransaction.toCurrency}
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <br />
+                  <p>Please click on a Transaction Made By Customer...</p>
+                </div>
+              )}
+            </>
           )}
         </Typography>
       </main>

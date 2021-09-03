@@ -26,6 +26,7 @@ const Store = ({ children }) => {
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(10);
+  const [transactionDetails, setTransactionDetails] = useState(false);
 
   const pageSizes = [10, 25, 50];
 
@@ -56,6 +57,8 @@ const Store = ({ children }) => {
         startDate,
         setEndDate,
         endDate,
+        transactionDetails,
+        setTransactionDetails,
       }}
     >
       {children}

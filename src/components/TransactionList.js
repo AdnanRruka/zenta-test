@@ -35,6 +35,7 @@ const TransactionList = () => {
     orderBy,
     startDate,
     endDate,
+    setTransactionDetails,
   } = useContext(GlobalContext);
 
   useEffect(() => {
@@ -84,6 +85,7 @@ const TransactionList = () => {
   const setActiveTransaction = (transaction, index) => {
     setCurrentTransaction(transaction);
     setCurrentIndex(index);
+    setTransactionDetails(false);
   };
 
   return (
