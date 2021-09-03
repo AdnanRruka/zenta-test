@@ -60,7 +60,17 @@ const TransactionList = () => {
       }
 
       axios
-        .get(`https://zentaapi.azurewebsites.net/transaction/Index${query}`)
+        .get(`https://zentaapi.azurewebsites.net/transaction/Index`, {
+          params: {
+            pageSize,
+            page,
+            searchPhrase,
+            order,
+            orderBy,
+            startDate,
+            endDate,
+          },
+        })
         .then((res) => {
           setAllData(res.data.data);
           history.push(query);

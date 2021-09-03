@@ -8,6 +8,9 @@ import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
 import Pagination from '@material-ui/lab/Pagination';
 import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import ClearIcon from '@material-ui/icons/Clear';
+import { IconButton } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -24,9 +27,10 @@ const useStyles = makeStyles((theme) => ({
   textField: {
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
-    width: 200,
+    width: 150,
   },
 }));
+
 function FilterFunctions() {
   const classes = useStyles();
   const {
@@ -52,8 +56,12 @@ function FilterFunctions() {
     if (e.target.name === 'endDate') {
       setEndDate(e.target.value);
     }
+  };
 
-    console.log(e.target);
+  const clearAllDates = (e) => {
+    e.stopPropagation();
+    setStartDate(null);
+    setEndDate(null);
   };
 
   const handlePageChange = (event, value) => {
@@ -87,7 +95,6 @@ function FilterFunctions() {
           <MenuItem value={50}>Fifty</MenuItem>
         </Select>
       </FormControl>
-
       <FormControl className={classes.formControl}>
         <InputLabel id="demo-simple-select-label">Order:</InputLabel>
         <Select
@@ -100,7 +107,6 @@ function FilterFunctions() {
           <MenuItem value="desc">Z-A</MenuItem>
         </Select>
       </FormControl>
-
       <FormControl className={classes.formControl}>
         <InputLabel id="demo-simple-select-label">Order By:</InputLabel>
         <Select
@@ -126,8 +132,10 @@ function FilterFunctions() {
           name="startDate"
           onChange={handleDatePickerChange}
         />
+        <IconButton onClick={() => setStartDate(null)}>
+          <ClearIcon />
+        </IconButton>
       </form>
-
       <form className={classes.container} noValidate>
         <TextField
           id="date"
@@ -137,13 +145,31 @@ function FilterFunctions() {
           className={classes.textField}
           InputLabelProps={{
             shrink: true,
+            // endAdornment: (
+            //   <IconButton onClick={() => setEndDate(null)}>
+            //     <ClearIcon />
+            //   </IconButton>
+            // ),
           }}
           name="endDate"
           onChange={handleDatePickerChange}
         />
+        <IconButton onClick={() => setEndDate(null)}>
+          <ClearIcon />
+        </IconButton>
       </form>
+
+      {/* <Button
+          onClick={(e) => {
+            clearAllDates(e);
+          }}
+          variant="contained"
+          color="primary"
+        >
+          Clear All Dates
+        </Button> */}
+
       <Pagination
-        className="my-3"
         count={count}
         page={page}
         siblingCount={1}
